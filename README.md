@@ -64,3 +64,24 @@ Dashboard lets you track daily:
 - Workout done
 - Cardio done
 - Mirror/strength notes
+
+## 5) Deploy on Render
+
+This repo includes `render.yaml`, so you can deploy in one flow.
+
+1. Push latest code to GitHub.
+2. In Render, click **New +** -> **Blueprint**.
+3. Select this repository and branch (`main`).
+4. In service env vars, add:
+   - `VITE_FIREBASE_API_KEY`
+   - `VITE_FIREBASE_AUTH_DOMAIN`
+   - `VITE_FIREBASE_PROJECT_ID`
+   - `VITE_FIREBASE_STORAGE_BUCKET`
+   - `VITE_FIREBASE_MESSAGING_SENDER_ID`
+   - `VITE_FIREBASE_APP_ID`
+5. Deploy.
+
+Notes:
+- Build command: `npm ci && npm run build`
+- Publish directory: `dist`
+- SPA routing is handled with a rewrite from `/*` to `/index.html`.

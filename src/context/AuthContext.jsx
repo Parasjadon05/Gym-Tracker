@@ -1,7 +1,10 @@
 import { createContext, useContext, useEffect, useState } from 'react'
 import {
+  browserLocalPersistence,
+  browserSessionPersistence,
   createUserWithEmailAndPassword,
   onAuthStateChanged,
+  setPersistence,
   signInWithEmailAndPassword,
   signOut,
 } from 'firebase/auth'
@@ -26,16 +29,31 @@ export function AuthProvider({ children }) {
     return unsub
   }, [])
 
+  /**
+   * Session persistence (web):
+   * - `persist: true` (default): survives browser close — `LOCAL` storage
+   * - `persist: false`: cleared when the tab/window session ends — `SESSION` storage
+   */
+  const applyPersistence = async (persist = true) => {
+    if (!auth) return
+    await setPersistence(
+      auth,
+      persist ? browserLocalPersistence : browserSessionPersistence,
+    )
+  }
+
   const value = {
     user,
     loading,
     hasFirebaseConfig,
-    signup: (email, password) => {
+    signup: async (email, password, { persist = true } = {}) => {
       if (!auth) throw new Error('Firebase is not configured. Add .env keys first.')
+      await applyPersistence(persist)
       return createUserWithEmailAndPassword(auth, email, password)
     },
-    login: (email, password) => {
+    login: async (email, password, { persist = true } = {}) => {
       if (!auth) throw new Error('Firebase is not configured. Add .env keys first.')
+      await applyPersistence(persist)
       return signInWithEmailAndPassword(auth, email, password)
     },
     logout: () => {

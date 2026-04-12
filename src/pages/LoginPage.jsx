@@ -8,6 +8,7 @@ function LoginPage() {
   const navigate = useNavigate()
   const [isSignup, setIsSignup] = useState(false)
   const [form, setForm] = useState({ email: '', password: '' })
+  const [keepSignedIn, setKeepSignedIn] = useState(true)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
@@ -16,8 +17,9 @@ function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      if (isSignup) await signup(form.email, form.password)
-      else await login(form.email, form.password)
+      const persist = keepSignedIn
+      if (isSignup) await signup(form.email, form.password, { persist })
+      else await login(form.email, form.password, { persist })
       navigate('/dashboard')
     } catch (err) {
       setError(err.message || 'Auth failed.')
@@ -53,6 +55,14 @@ function LoginPage() {
           onChange={(e) => setForm((p) => ({ ...p, password: e.target.value }))}
           required
         />
+        <label className="auth-session-row">
+          <input
+            type="checkbox"
+            checked={keepSignedIn}
+            onChange={(e) => setKeepSignedIn(e.target.checked)}
+          />
+          <span>Keep me signed in on this device</span>
+        </label>
         {error && <div className="error">{error}</div>}
         <button className="btn-primary" disabled={loading}>
           {loading ? 'Please wait...' : isSignup ? 'Sign up' : 'Log in'}

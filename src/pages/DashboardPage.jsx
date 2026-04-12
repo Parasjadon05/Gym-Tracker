@@ -562,6 +562,11 @@ function DashboardPage() {
       <motion.header className="top-nav" initial="hidden" animate="show" variants={fadeUp}>
         <div className="logo">Gymverse</div>
         <div className="nav-actions">
+          {user?.email && (
+            <span className="chip chip--muted" title={user.email}>
+              {user.email.length > 22 ? `${user.email.slice(0, 20)}…` : user.email}
+            </span>
+          )}
           <span className="chip">{key}</span>
           <button className="btn-secondary" onClick={onLogout}>
             Logout

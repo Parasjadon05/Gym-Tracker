@@ -3,7 +3,7 @@
 Custom app built from your exact coaching chat:
 
 - Landing page with cartoon-gym vibe and animated sections
-- Firebase auth (email/password login + signup)
+- Firebase auth (Google sign-in)
 - Personal dashboard for your 6-day aesthetic split
 - Vegetarian recomp diet plan
 - Daily tracker saved to Firestore
@@ -28,7 +28,8 @@ npm run dev
 
 Enable in Firebase console:
 
-- Authentication -> Email/Password
+- Authentication -> Sign-in method -> **Google** (enable, set support email)
+- Add your production domain under **Authentication -> Settings -> Authorized domains** (e.g. your Render URL and custom domain)
 - Firestore Database (production or test mode)
 
 Data path used by app:

@@ -2,13 +2,16 @@ import { createContext, useContext, useEffect, useState } from 'react'
 import {
   browserLocalPersistence,
   browserSessionPersistence,
-  createUserWithEmailAndPassword,
+  GoogleAuthProvider,
   onAuthStateChanged,
   setPersistence,
-  signInWithEmailAndPassword,
+  signInWithPopup,
   signOut,
 } from 'firebase/auth'
 import { auth, hasFirebaseConfig } from '../firebase'
+
+const googleProvider = new GoogleAuthProvider()
+googleProvider.setCustomParameters({ prompt: 'select_account' })
 
 const AuthContext = createContext(null)
 
@@ -29,11 +32,6 @@ export function AuthProvider({ children }) {
     return unsub
   }, [])
 
-  /**
-   * Session persistence (web):
-   * - `persist: true` (default): survives browser close — `LOCAL` storage
-   * - `persist: false`: cleared when the tab/window session ends — `SESSION` storage
-   */
   const applyPersistence = async (persist = true) => {
     if (!auth) return
     await setPersistence(
@@ -46,15 +44,10 @@ export function AuthProvider({ children }) {
     user,
     loading,
     hasFirebaseConfig,
-    signup: async (email, password, { persist = true } = {}) => {
+    loginWithGoogle: async ({ persist = true } = {}) => {
       if (!auth) throw new Error('Firebase is not configured. Add .env keys first.')
       await applyPersistence(persist)
-      return createUserWithEmailAndPassword(auth, email, password)
-    },
-    login: async (email, password, { persist = true } = {}) => {
-      if (!auth) throw new Error('Firebase is not configured. Add .env keys first.')
-      await applyPersistence(persist)
-      return signInWithEmailAndPassword(auth, email, password)
+      return signInWithPopup(auth, googleProvider)
     },
     logout: () => {
       if (!auth) return Promise.resolve()
